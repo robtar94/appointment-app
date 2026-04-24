@@ -1,0 +1,67 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!-- Profiles for different environments -->
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>development</id>-->
+<!--            <properties>-->
+<!--                <env>dev</env>-->
+<!--            </properties>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>production</id>-->
+<!--            <properties>-->
+<!--                <env>prod</env>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
+
+    <!-- Servers configuration for repositories that require authentication -->
+<!--    <servers>-->
+<!--        <server>-->
+<!--            <id>private-repo</id>-->
+<!--            <username>${env.MAVEN_REPO_USERNAME}</username>-->
+<!--            <password>${env.MAVEN_REPO_PASSWORD}</password>-->
+<!--        </server>-->
+<!--    </servers>-->
+
+    <!-- Mirrors configuration -->
+    <mirrors>
+        <!-- Central Repository Mirror -->
+        <mirror>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <!-- Proxy configuration if you're behind a corporate proxy -->
+    <!--
+    <proxies>
+        <proxy>
+            <id>optional</id>
+            <active>true</active>
+            <protocol>http</protocol>
+            <host>proxy.company.com</host>
+            <port>8080</port>
+            <username>proxyuser</username>
+            <password>proxypass</password>
+            <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>
+        </proxy>
+    </proxies>
+    -->
+
+    <!-- Local repository location -->
+    <localRepository>${user.home}/.m2/repository</localRepository>
+
+    <!-- General settings -->
+    <offline>false</offline>
+    <interactiveMode>true</interactiveMode>
+
+</settings>

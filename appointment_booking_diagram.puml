@@ -1,0 +1,95 @@
+@startuml
+
+' 1️⃣ Specialist creates a new Treatment
+actor Specialist
+participant TreatmentAPI
+participant Database
+
+Specialist -> TreatmentAPI: Create new Treatment
+TreatmentAPI -> Database: INSERT INTO Treatment
+Database --> TreatmentAPI: Success
+TreatmentAPI --> Specialist: Treatment created
+
+' 2️⃣ Client books an appointment
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Request appointment(treatment, dateTime)
+BookingAPI -> Database: Check availability
+Database --> BookingAPI: Available
+BookingAPI -> Database: INSERT INTO Appointment
+Database --> BookingAPI: Success
+BookingAPI --> Client: Appointment confirmed
+
+' 3️⃣ Validate scheduling conflicts
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Request appointment(treatment, dateTime)
+BookingAPI -> Database: Check conflicts (SELECT * FROM Appointment WHERE specialistId=? AND dateTime=?)
+Database --> BookingAPI: Conflict found
+BookingAPI --> Client: Error - Time slot unavailable
+
+' 4️⃣ Client checks their appointments
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Get my appointments
+BookingAPI -> Database: SELECT * FROM Appointment WHERE client_id = ?
+Database --> BookingAPI: Appointments list
+BookingAPI --> Client: Return appointments
+
+' 5️⃣ Client cancels an appointment
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Cancel appointment(id)
+BookingAPI -> Database: UPDATE Appointment SET status='CANCELLED' WHERE id=?
+Database --> BookingAPI: Success
+BookingAPI --> Client: Appointment cancelled
+
+' 6️⃣ Specialist marks appointment as completed
+actor Specialist
+participant BookingAPI
+participant Database
+
+Specialist -> BookingAPI: Mark appointment as completed(id)
+BookingAPI -> Database: UPDATE Appointment SET status='COMPLETED' WHERE id=?
+Database --> BookingAPI: Success
+BookingAPI --> Specialist: Appointment marked as completed
+
+' 7️⃣ Client retrieves appointment history
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Get past appointments
+BookingAPI -> Database: SELECT * FROM Appointment WHERE client_id = ? AND status IN ('COMPLETED', 'CANCELLED')
+Database --> BookingAPI: Appointment history
+BookingAPI --> Client: Return appointment history
+
+' 8️⃣ Specialist retrieves their appointment history
+actor Specialist
+participant BookingAPI
+participant Database
+
+Specialist -> BookingAPI: Get past appointments
+BookingAPI -> Database: SELECT * FROM Appointment WHERE specialist_id = ? AND status IN ('COMPLETED', 'CANCELLED')
+Database --> BookingAPI: Appointment history
+BookingAPI --> Specialist: Return appointment history
+
+' 9️⃣ Checking appointment availability
+actor Client
+participant BookingAPI
+participant Database
+
+Client -> BookingAPI: Check availability(specialistId, dateTime)
+BookingAPI -> Database: Check existing appointments (SELECT * FROM Appointment WHERE specialistId=? AND dateTime=?)
+Database --> BookingAPI: Available or Not Available
+BookingAPI --> Client: Return availability status
+
+@enduml

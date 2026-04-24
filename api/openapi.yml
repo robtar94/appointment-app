@@ -1,0 +1,266 @@
+openapi: 3.0.3
+info:
+  title: Appointment Booking API
+  description: API for managing appointments, treatments, clients, and specialists.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/v1/treatments:
+    get:
+      summary: Get a list of available treatments
+      operationId: getTreatments
+      tags:
+        - Treatments
+      responses:
+        "200":
+          description: List of treatments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Treatment"
+
+    post:
+      summary: Create a new treatment
+      operationId: createTreatment
+      tags:
+        - Treatments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TreatmentRequest"
+      responses:
+        "201":
+          description: Treatment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Treatment"
+        "400":
+          description: Invalid request data
+        "403":
+          description: Only specialists can create treatments
+
+  /api/v1/treatments/{treatmentId}:
+    get:
+      summary: Get treatment details (with specialist info)
+      operationId: getTreatmentDetails
+      tags:
+        - Treatments
+      parameters:
+        - name: treatmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Treatment details including assigned specialist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TreatmentDetails"
+        "404":
+          description: Treatment not found
+
+  /api/v1/appointments:
+    get:
+      summary: Get all appointments with filtering options
+      operationId: getAppointments
+      tags:
+        - Appointments
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: string
+        - name: specialistId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [SCHEDULED, CANCELLED, COMPLETED]
+      responses:
+        "200":
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+
+    post:
+      summary: Schedule an appointment
+      operationId: createAppointment
+      tags:
+        - Appointments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentRequest"
+      responses:
+        "201":
+          description: Appointment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "400":
+          description: Invalid request data
+        "409":
+          description: Appointment slot conflict
+
+  /api/v1/appointments/{appointmentId}:
+    patch:
+      summary: Update appointment status
+      operationId: updateAppointmentStatus
+      tags:
+        - Appointments
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentStatusUpdate"
+      responses:
+        "200":
+          description: Appointment status updated
+        "400":
+          description: Invalid status
+        "404":
+          description: Appointment not found
+
+  /api/v1/availability:
+    get:
+      summary: Check appointment slot availability
+      operationId: checkAvailability
+      tags:
+        - Appointments
+      parameters:
+        - name: specialistId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dateTime
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Slot availability result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+
+components:
+  schemas:
+    Treatment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        duration:
+          type: integer
+          description: Duration of the treatment in minutes
+        specialistId:
+          type: integer
+          format: int64
+
+    TreatmentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        specialistId:
+          type: integer
+          format: int64
+
+    TreatmentDetails:
+      allOf:
+        - $ref: "#/components/schemas/Treatment"
+        - type: object
+          properties:
+            specialist:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+
+    AppointmentRequest:
+      type: object
+      required:
+        - clientId
+        - treatmentId
+        - dateTime
+      properties:
+        clientId:
+          type: integer
+          format: int64
+        treatmentId:
+          type: integer
+          format: int64
+        dateTime:
+          type: string
+          format: date-time
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        clientId:
+          type: integer
+          format: int64
+        treatmentId:
+          type: integer
+          format: int64
+        dateTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [SCHEDULED, CANCELLED, COMPLETED]
+
+    AppointmentStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [CANCELLED, COMPLETED]

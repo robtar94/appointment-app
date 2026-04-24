@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - Java Backend Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link, .logout-link {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-link:hover, .logout-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-separator {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn.danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn.danger:hover {
+            background: #b71c1c;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #f5f7fa;
+            color: #333;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-scheduled {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-completed {
+            background: #c8e6c9;
+            color: #388e3c;
+        }
+
+        .status-cancelled {
+            background: #ffcccc;
+            color: #d32f2f;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #d32f2f;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: #388e3c;
+            background: #c8e6c9;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #388e3c;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .action-buttons .btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="header-content">
+            <h1 class="header-title">Java Backend Developer</h1>
+            <nav class="nav-menu" id="navMenu">
+                <a href="/" class="nav-link">Home</a>
+                <span class="nav-separator">|</span>
+                <span id="navPlaceholder" style="color: rgba(255, 255, 255, 0.5);">Loading...</span>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-section">
+            <h1 class="page-title">📅 Appointments</h1>
+            <p class="page-subtitle">Manage and schedule your appointments</p>
+
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="scheduleBtn">Schedule New Appointment</button>
+                <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+            </div>
+
+            <div id="appointmentsContent"></div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Schedule New Appointment</div>
+            <div id="treatmentSelect" class="form-group">
+                <label for="treatment">Treatment</label>
+                <select id="treatment" required>
+                    <option value="">Loading treatments...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="appointmentDate">Date & Time</label>
+                <input type="datetime-local" id="appointmentDate" required>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+                <button class="btn btn-primary" id="submitBtn">Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load appointments and setup event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+            loadAppointments();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('scheduleBtn').addEventListener('click', openScheduleModal);
+            document.getElementById('cancelModalBtn').addEventListener('click', closeScheduleModal);
+            document.getElementById('submitBtn').addEventListener('click', submitSchedule);
+            document.getElementById('refreshBtn').addEventListener('click', loadAppointments);
+        }
+
+        let currentUser = null;
+
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/user/info');
+                const data = await response.json();
+
+                if (data.authenticated) {
+                    currentUser = data;
+                    const navPlaceholder = document.getElementById('navPlaceholder');
+                    navPlaceholder.innerHTML = `
+                        <a href="/" class="nav-link">Home</a>
+                        <span class="nav-separator">|</span>
+                        <a href="/treatments" class="nav-link">Treatments</a>
+                        <span class="nav-separator">|</span>
+                        <a href="/logout" class="logout-link">Logout (${data.username})</a>
+                    `;
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        async function loadAppointments() {
+            const appointmentsContent = document.getElementById('appointmentsContent');
+            appointmentsContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading appointments...</p></div>';
+
+            try {
+                const response = await fetch('/api/v1/appointments');
+                if (!response.ok) throw new Error('Failed to load appointments');
+
+                let appointments = await response.json();
+
+                // Handle Optional field unwrapping
+                if (appointments && Array.isArray(appointments)) {
+                    appointments = appointments.map(apt => ({
+                        id: apt.id && apt.id.length > 0 ? apt.id[0] : apt.id,
+                        clientId: apt.clientId && apt.clientId.length > 0 ? apt.clientId[0] : apt.clientId,
+                        treatmentId: apt.treatmentId && apt.treatmentId.length > 0 ? apt.treatmentId[0] : apt.treatmentId,
+                        dateTime: apt.dateTime && apt.dateTime.length > 0 ? apt.dateTime[0] : apt.dateTime,
+                        status: apt.status && apt.status.length > 0 ? apt.status[0] : apt.status,
+                        treatmentName: apt.treatmentName && apt.treatmentName.length > 0 ? apt.treatmentName[0] : 'N/A',
+                        specialistName: apt.specialistName && apt.specialistName.length > 0 ? apt.specialistName[0] : 'N/A',
+                        durationMinutes: apt.durationMinutes && apt.durationMinutes.length > 0 ? apt.durationMinutes[0] : 'N/A'
+                    }));
+                }
+
+                if (!appointments || appointments.length === 0) {
+                    appointmentsContent.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <div class="empty-state-title">No Appointments</div>
+                            <p>You don't have any scheduled appointments yet.</p>
+                        </div>
+                    `;
+                } else {
+                    const tableHtml = `
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Treatment ID</th>
+                                        <th>Date & Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${appointments.map(appointment => `
+                                        <tr>
+                                            <td>${appointment.treatmentId || 'N/A'}</td>
+                                            <td>${formatDateTime(appointment.dateTime)}</td>
+                                            <td>
+                                                <span class="status-badge status-${(appointment.status || '').toLowerCase()}">
+                                                    ${appointment.status || 'N/A'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    ${appointment.status === 'SCHEDULED' ? `
+                                                        <button class="btn btn-secondary" onclick="cancelAppointment(${appointment.id})">Cancel</button>
+                                                    ` : ''}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    appointmentsContent.innerHTML = tableHtml;
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                appointmentsContent.innerHTML = '';
+                showError('Failed to load appointments. Please try again.');
+            }
+        }
+
+        async function openScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            modal.classList.add('show');
+
+            // Load treatments
+            try {
+                const response = await fetch('/api/v1/treatments');
+                if (!response.ok) throw new Error('Failed to load treatments');
+
+                const treatments = await response.json();
+                const treatmentSelect = document.getElementById('treatment');
+                treatmentSelect.innerHTML = `
+                    <option value="">Select a treatment</option>
+                    ${treatments.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('')}
+                `;
+            } catch (error) {
+                console.error('Error loading treatments:', error);
+                showError('Failed to load treatments');
+            }
+
+            // Set minimum date to now
+            const now = new Date();
+            const minDateTime = now.toISOString().slice(0, 16);
+            document.getElementById('appointmentDate').min = minDateTime;
+        }
+
+        function closeScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            modal.classList.remove('show');
+        }
+
+        async function submitSchedule() {
+            const treatmentId = document.getElementById('treatment').value;
+            const dateTime = document.getElementById('appointmentDate').value;
+
+            if (!treatmentId || !dateTime) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            try {
+                // Get current user's client ID - need to fetch if not available
+                let clientId = currentUser?.id;
+                if (!clientId) {
+                    showError('Unable to determine your client ID. Please refresh and try again.');
+                    return;
+                }
+
+                const response = await fetch('/api/v1/appointments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clientId: clientId,
+                        treatmentId: parseInt(treatmentId),
+                        dateTime: new Date(dateTime).toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to schedule appointment');
+                }
+
+                closeScheduleModal();
+                showSuccess('Appointment scheduled successfully!');
+                loadAppointments();
+            } catch (error) {
+                console.error('Error scheduling appointment:', error);
+                showError(error.message || 'Failed to schedule appointment');
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) return;
+
+            try {
+                const response = await fetch(`/api/v1/appointments/${appointmentId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'CANCELLED'
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to cancel appointment');
+
+                showSuccess('Appointment cancelled successfully');
+                loadAppointments();
+            } catch (error) {
+                console.error('Error cancelling appointment:', error);
+                showError('Failed to cancel appointment');
+            }
+        }
+
+        function formatDateTime(dateTimeString) {
+            try {
+                const date = new Date(dateTimeString);
+                return date.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch (e) {
+                return dateTimeString;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.classList.add('show');
+            setTimeout(() => successEl.classList.remove('show'), 5000);
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('scheduleModal');
+            if (event.target === modal) {
+                closeScheduleModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
