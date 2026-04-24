@@ -447,7 +447,6 @@
             <div id="modalDetails"></div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="closeModalBtn">Close</button>
-                <button class="btn btn-primary" id="bookBtn">Book Appointment</button>
             </div>
         </div>
     </div>
@@ -470,7 +469,6 @@
                 if (e.key === 'Enter') performSearch();
             });
             document.getElementById('closeModalBtn').addEventListener('click', closeDetailsModal);
-            document.getElementById('bookBtn').addEventListener('click', bookAppointment);
             document.querySelectorAll('.view-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     switchView(this.dataset.view);
@@ -666,14 +664,6 @@
             selectedTreatmentId = null;
         }
 
-        function bookAppointment() {
-            if (!selectedTreatmentId) return;
-
-            closeDetailsModal();
-            // Navigate to appointments page to book
-            alert('To book an appointment, go to the Appointments page.');
-            // In a real app, you might open a modal to select date/time
-        }
 
         function switchView(newView) {
             currentView = newView;

@@ -15,6 +15,8 @@ This project was created during an internal training organized by my employer.
 
 The application is deployed and available at: **http://srv11.mikr.us:20109/**
 
+Current deployed version: **0.0.1.1-ALPHA** (see `pom.xml`).
+
 ## Login Credentials
 
 The following demo accounts are available (both on the VPS demo and locally):
