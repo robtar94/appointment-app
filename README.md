@@ -1,4 +1,4 @@
-# Appointment Booking API Project
+# Appointment Booking APP Project
 
 This project was initialy created during an internal training organized by my employer.
 
