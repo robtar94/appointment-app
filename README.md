@@ -1,6 +1,6 @@
 # Appointment Booking API Project
 
-This project was created during an internal training organized by my employer.
+This project was created during an internal training organized by my employer. Later rewritten and extended by me.
 
 ## Table of Contents
 
