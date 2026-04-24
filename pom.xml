@@ -8,7 +8,7 @@
         <version>3.5.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.capgemini.training</groupId>
+    <groupId>com.robert</groupId>
     <artifactId>appointment-booking</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name/>
@@ -262,8 +262,8 @@
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <cleanupOutput>true</cleanupOutput>
                             <generatorName>spring</generatorName>
-                            <apiPackage>com.capgemini.training.appointmentbooking.service.api</apiPackage>
-                            <modelPackage>com.capgemini.training.appointmentbooking.service.model</modelPackage>
+                            <apiPackage>com.robert.appointmentbooking.service.api</apiPackage>
+                            <modelPackage>com.robert.appointmentbooking.service.model</modelPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>

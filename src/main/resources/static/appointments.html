@@ -525,11 +525,20 @@
                 const response = await fetch('/api/v1/treatments');
                 if (!response.ok) throw new Error('Failed to load treatments');
 
-                const treatments = await response.json();
+                let treatments = await response.json();
+
+                // Handle Optional field unwrapping (backend returns arrays for Optional fields)
+                if (treatments && Array.isArray(treatments)) {
+                    treatments = treatments.map(t => ({
+                        id: Array.isArray(t.id) ? (t.id.length > 0 ? t.id[0] : null) : t.id,
+                        name: Array.isArray(t.name) ? (t.name.length > 0 ? t.name[0] : '') : t.name
+                    }));
+                }
+
                 const treatmentSelect = document.getElementById('treatment');
                 treatmentSelect.innerHTML = `
                     <option value="">Select a treatment</option>
-                    ${treatments.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('')}
+                    ${treatments.filter(t => t.id != null).map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('')}
                 `;
             } catch (error) {
                 console.error('Error loading treatments:', error);
