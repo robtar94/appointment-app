@@ -4,9 +4,50 @@ This project was created during an internal training organized by my employer.
 
 ## Table of Contents
 
+- [Live Demo (VPS)](#live-demo-vps)
+- [Login Credentials](#login-credentials)
+- [Technology Stack](#technology-stack)
 - [Java Version](#java-version)
 - [Used Libraries](#used-libraries)
 - [Available Endpoints](#available-endpoints)
+
+## Live Demo (VPS)
+
+The application is deployed and available at: **http://srv11.mikr.us:20109/**
+
+## Login Credentials
+
+The following demo accounts are available (both on the VPS demo and locally):
+
+| Role         | Username      | Password      |
+|--------------|---------------|---------------|
+| Admin        | `admin`       | `admin`       |
+| Specialist   | `specialist`  | `specialist`  |
+| Receptionist | `receptionist`| `receptionist`|
+| Client       | `client`      | `client`      |
+
+## Technology Stack
+
+### Backend
+
+- **Java 21**
+- **Spring Boot 3.5** (Web, Data JPA, Security, Validation, Actuator)
+- **Spring Security** (Basic Auth, in-memory users)
+- **Hibernate / JPA** with **QueryDSL** for type-safe queries
+- **MapStruct** for DTO/entity mapping
+- **Flyway** for database migrations
+- **H2** in-memory database
+- **OpenAPI / Swagger** (springdoc + openapi-generator-maven-plugin)
+- **Lombok**
+- **Maven** as the build tool
+- **JUnit 5** and **Spring Security Test** for testing
+- **Docker** (see `Dockerfile`) for containerized deployment on VPS
+
+### Frontend
+
+- **React** + **Vite** (bundled static assets served from `src/main/resources/static`)
+- **Axios** for HTTP calls to the REST API
+- Static HTML pages (`login.html`, `home.html`, `treatments.html`, `appointments.html`) integrated with the Spring Boot backend
 
 ## Java Version
 
