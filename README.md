@@ -25,7 +25,7 @@ The **Appointment Booking System** allows clients to schedule appointments with 
 
 The application is deployed and available at: **http://srv11.mikr.us:20109/**
 
-Current deployed version: **0.0.2.0-ALPHA** (see `pom.xml`).
+Current deployed version: **0.0.2.1-ALPHA** (see `pom.xml`).
 
 ## Login Credentials
 
