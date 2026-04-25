@@ -2,8 +2,18 @@
 
 This project was initialy created during an internal training organized by my employer.
 
+## Business Overview
+
+The **Appointment Booking System** allows clients to schedule appointments with specialists for various treatments (e.g. dental consultations, medical procedures). Key capabilities include:
+
+- **Clients** can browse available treatments, book appointments, cancel them, and view their appointment history.
+- **Specialists** can create and manage treatments, mark appointments as completed, and review their schedule history.
+- **Receptionists / Admins** oversee the system and manage users.
+- The system automatically **validates scheduling conflicts**, ensuring no two appointments overlap for the same specialist.
+
 ## Table of Contents
 
+- [Business Overview](#business-overview)
 - [Live Demo (VPS)](#live-demo-vps)
 - [Login Credentials](#login-credentials)
 - [Technology Stack](#technology-stack)
